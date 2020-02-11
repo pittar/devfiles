@@ -1,0 +1,83 @@
+metadata:
+  name: wksp-lbii
+projects:
+  - name: andrew-fuse
+    source:
+      location: 'https://github.com/jboss-fuse/fuse-rest-http-booster/'
+      type: git
+      branch: master
+components:
+  - id: redhat/java8/latest
+    type: chePlugin
+  - id: redhat/vscode-apache-camel/latest
+    type: chePlugin
+  - endpoints:
+      - name: amqp
+        port: 5672
+        attributes:
+          discoverable: 'true'
+          public: 'false'
+      - name: mqtt
+        port: 1883
+        attributes:
+          discoverable: 'true'
+          public: 'false'
+      - name: stomp
+        port: 61613
+        attributes:
+          discoverable: 'true'
+          public: 'false'
+      - name: tcp
+        port: 61616
+        attributes:
+          discoverable: 'true'
+          public: 'false'
+    memoryLimit: 256Mi
+    type: dockerimage
+    alias: amq
+    image: registry.redhat.io/jboss-amq-6/amq63-openshift
+    env:
+      - value: user
+        name: AMQ_USER
+      - value: password
+        name: AMQ_PASSWORD
+      - value: openwire
+        name: AMQ_TRANSPORTS
+      - value: aptest
+        name: AMQ_QUEUES
+      - value: aptopic
+        name: AMQ_TOPICS
+      - value: 1 gb
+        name: AMQ_STORAGE_USAGE_LIMIT
+      - value: 32mb
+        name: AMQ_QUEUE_MEMORY_LIMIT
+  - mountSources: true
+    endpoints:
+      - name: '8080'
+        port: 8080
+    memoryLimit: 768Mi
+    type: dockerimage
+    volumes:
+      - name: m2
+        containerPath: /home/jboss/.m2
+    alias: maven
+    image: 'registry.redhat.io/codeready-workspaces/stacks-java-rhel8:2.0'
+    env:
+      - value: >-
+          -XX:MaxRAMPercentage=50.0 -XX:+UseParallelGC -XX:MinHeapFreeRatio=10
+          -XX:MaxHeapFreeRatio=20 -XX:GCTimeRatio=4
+          -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true
+          -Xms20m -Djava.security.egd=file:/dev/./urandom
+          -Duser.home=/home/jboss
+        name: JAVA_OPTS
+      - value: $(JAVA_OPTS)
+        name: MAVEN_OPTS
+  - id: redhat/vscode-openshift-connector/latest
+    type: chePlugin
+  - id: redhat/project-initializer/latest
+    type: chePlugin
+  - id: redhat/vscode-yaml/latest
+    type: chePlugin
+  - id: redhat/vscode-xml/latest
+    type: chePlugin
+apiVersion: 1.0.0
