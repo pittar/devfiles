@@ -15,7 +15,8 @@ components:
   -
     type: dockerimage
     alias: nodejs
-    image: quay.io/pittar/crw-nodejs12-angular:latest
+    image: quay.io/eclipse/che-nodejs12-community:next
+    #image: quay.io/pittar/crw-nodejs12-angular:latest
     #image: quay.io/eclipse/che-nodejs10-community:next
     memoryLimit: 2Gi
     endpoints:
