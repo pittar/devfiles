@@ -15,8 +15,8 @@ components:
   -
     type: dockerimage
     alias: nodejs
-    image: quay.io/eclipse/che-nodejs12-community:next
-    #image: quay.io/pittar/crw-nodejs12-angular:latest
+    #image: quay.io/eclipse/che-nodejs12-community:next
+    image: quay.io/pittar/crw-nodejs12-angular:latest
     #image: quay.io/eclipse/che-nodejs10-community:next
     memoryLimit: 2Gi
     endpoints:
@@ -24,6 +24,12 @@ components:
         port: 4200
     mountSources: true
 commands:
+  - name: yarn add angular cli
+    actions:
+      - type: exec
+        component: nodejs
+        command: yarn global add @angular/cli
+        workdir: ${CHE_PROJECTS_ROOT}/angular-realworld-example-app
   - name: yarn install
     actions:
       - type: exec
